@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
+#include "GUI.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    sf::RenderWindow window(sf::VideoMode(600, 800), "Calculator");
+    GUI::Button button(sf::Vector2f(250.f, 350.f), sf::Vector2f(100.f, 100.f), "Booty");
 
     while (window.isOpen())
     {
@@ -16,8 +16,8 @@ int main()
         }
 
         window.clear();
-        window.draw(shape);
-        window.display();
+        button.draw(window);
+        window.display(); 
     }
 
     return 0;
