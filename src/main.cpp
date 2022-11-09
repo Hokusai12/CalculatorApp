@@ -1,10 +1,19 @@
 #include <SFML/Graphics.hpp>
-#include "GUI.h"
+#include <vector>
+#include "Button.h"
+
+void appInit();
+void appDraw(sf::RenderWindow& window);
+void appUpdate();
+
+GUI::Button buttons[10];
+
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(600, 800), "Calculator");
-    GUI::Button button(sf::Vector2f(250.f, 350.f), sf::Vector2f(100.f, 100.f), "Booty");
+    sf::RenderWindow window(sf::VideoMode(600, 700), "Calculator");
+
+    appInit();
 
     while (window.isOpen())
     {
@@ -16,9 +25,20 @@ int main()
         }
 
         window.clear();
-        button.draw(window);
+        appDraw(window);
         window.display(); 
     }
 
     return 0;
+}
+
+void appInit()
+{
+    GUI::Button button(sf::Vector2f(150.f, 250.f), sf::Vector2f(100.f, 100.f), "9");
+    buttons[0] = button;
+}
+
+void appDraw(sf::RenderWindow &window)
+{
+    buttons[0].draw(window);
 }
