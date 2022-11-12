@@ -42,6 +42,18 @@ namespace GUI
 		m_text.setFillColor(sf::Color::Black);
 	}
 
+	void Button::setPosition(sf::Vector2f position)
+	{
+		m_pos = position;
+		m_rectBox.setPosition(m_pos);
+		centerText();
+	}
+
+	void Button::setSize(sf::Vector2f size)
+	{
+		m_size = size;
+		m_rectBox.setSize(m_size);
+	}
 
 	void Button::setColor(sf::Color newColor, sf::Color outline)
 	{
@@ -52,6 +64,8 @@ namespace GUI
 	void Button::setText(sf::String newText, sf::Color textColor)
 	{
 		m_text = sf::Text(newText, m_font);
+		m_text.setFillColor(textColor);
+		centerText();
 	}
 
 	void Button::setTextSize(unsigned int newSize)
@@ -83,7 +97,7 @@ namespace GUI
 		m_text = sf::Text(button.getTextString(), m_font);
 		m_outlineColor = button.getOutlineColor();
 		m_fillColor = button.getFillColor();
-		initNewButton(m_pos, m_size, m_text);
+		//initNewButton(m_pos, m_size, m_text);
 	}
 
 	void Button::initNewButton(sf::Vector2f position, sf::Vector2f size, sf::Text text)

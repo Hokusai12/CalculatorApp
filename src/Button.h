@@ -26,6 +26,8 @@ namespace GUI
 		void setText(sf::String newText, sf::Color textColor);
 		void setTextSize(unsigned int newSize);
 		void setFont(sf::Font newFont);
+		void setPosition(sf::Vector2f position);
+		void setSize(sf::Vector2f size);
 		void operator=(Button &button);
 		sf::Vector2f getPos();
 		sf::Vector2f getSize();

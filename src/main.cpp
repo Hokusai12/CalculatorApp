@@ -6,7 +6,7 @@ void appInit();
 void appDraw(sf::RenderWindow& window);
 void appUpdate();
 
-GUI::Button buttons[10];
+GUI::Button buttons[9];
 
 
 int main()
@@ -38,9 +38,10 @@ void appInit()
     {
         for (int j = 0; j < 3; j++)
         {
-            std::string str = std::to_string(j + (i * 3));
-            GUI::Button button(sf::Vector2f(100.f * j, 200.f + (100.f * i)), sf::Vector2f(100.f, 100.f), str);
-            buttons[j + (3 * i)] = button;
+            std::string str = std::to_string(7 + j - (i * 3));
+            buttons[j + (3 * i)].setPosition(sf::Vector2f((105.f * j) + 200.f, 200.f + (105.f * i)));
+            buttons[j + (3 * i)].setSize(sf::Vector2f(100.f, 100.f));
+            buttons[j + (3 * i)].setText(str, sf::Color::Black);
         }
     }
 }
