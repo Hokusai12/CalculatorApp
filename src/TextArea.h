@@ -1,0 +1,9 @@
+
+
+namespace GUI
+{
+	class TextArea
+	{
+
+	};
+}

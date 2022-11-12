@@ -21,6 +21,8 @@ namespace GUI
 		Button();
 		
 		void draw(sf::RenderWindow& window);
+		void update(sf::RenderWindow &window);
+		bool contains(float x, float y);
 		void initNewButton(sf::Vector2f position, sf::Vector2f size, sf::Text text);//Initializes the new position and text for the =operator overload function
 		void setColor(sf::Color newColor, sf::Color outline);
 		void setText(sf::String newText, sf::Color textColor);

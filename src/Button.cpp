@@ -133,6 +133,31 @@ namespace GUI
 		window.draw(m_text);
 	}
 
+	void Button::update(sf::RenderWindow &window)
+	{
+		if (contains(sf::Mouse::getPosition(window).x * 1.0f, sf::Mouse::getPosition(window).y * 1.0f))
+		{
+			setColor(sf::Color::Yellow, sf::Color::Black);
+		}
+		else
+		{
+			setColor(sf::Color::White, sf::Color::Black);
+		}
+	}
+
+	bool Button::contains(float x, float y)
+	{
+		sf::FloatRect bounds = m_rectBox.getGlobalBounds();
+		if (x > bounds.left && x < bounds.left + bounds.width)
+		{
+			if (y > bounds.top && y < bounds.top + bounds.height)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void Button::setFont(sf::Font newFont)
 	{
 		m_font = newFont;
