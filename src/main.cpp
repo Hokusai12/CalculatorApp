@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <vector>
+#include <string>
 #include "Button.h"
 
 void appInit();
@@ -34,11 +34,21 @@ int main()
 
 void appInit()
 {
-    GUI::Button button(sf::Vector2f(150.f, 250.f), sf::Vector2f(100.f, 100.f), "9");
-    buttons[0] = button;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            std::string str = std::to_string(j + (i * 3));
+            GUI::Button button(sf::Vector2f(100.f * j, 200.f + (100.f * i)), sf::Vector2f(100.f, 100.f), str);
+            buttons[j + (3 * i)] = button;
+        }
+    }
 }
 
 void appDraw(sf::RenderWindow &window)
 {
-    buttons[0].draw(window);
+    for (int i = 0; i < 9; i++)
+    {
+        buttons[i].draw(window);
+    }
 }
