@@ -1,13 +1,13 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
-#include <unordered_map>
+#include <vector>
 #include "Button.h"
 
 void appInit();
 void appDraw(sf::RenderWindow& window);
 void appUpdate(sf::RenderWindow &window);
-bool solveEquation(std::string &equation);
+double solveEquation(std::vector<char>& ops, std::vector<double>& nums, const char* activeOp);
 double addNums(double a, double b) { return a + b; }
 double subNums(double a, double b) { return a - b; }
 double multNums(double a, double b) { return a * b; }
@@ -18,12 +18,14 @@ GUI::Button numButtons[10];
 GUI::Button opButtons[5];
 
 bool solveTime = false;
-std::string equation = "";
+std::string number = "";
+std::vector<char> operators;
+std::vector<double> numbers;
 
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(630, 735), "Calculator");
+    sf::RenderWindow window(sf::VideoMode(640, 755), "Calculator");
 
     appInit();
 
@@ -42,23 +44,27 @@ int main()
                     {
                         if (numButtons[i].isActive())
                         {
-                            equation += numButtons[i].getTextString().toAnsiString();
+                            number += numButtons[i].getTextString().toAnsiString();
                         }
                     }
                     for (int i = 0; i < 5; i++)
                     {
                         if (opButtons[i].isActive())
                         {
-                            equation += opButtons[i].getTextString().toAnsiString();
-                        }
-                        if (equation[equation.length()] == '=')
-                        {
-                            solveTime = true;
-                            break;
+                            operators.emplace_back(opButtons[i].getTextString().toAnsiString()[0]);
+                            numbers.emplace_back((double)atoi(number.c_str()));
+                            std::cout << "Numbers: " << *numbers.data() << std::endl;
+                            std::cout << "Operators: " << *operators.data() << std::endl;
+                            number = "";
+                            if (opButtons[i].getTextString().toAnsiString() == "=")
+                            {
+                                operators.pop_back();
+                                solveTime = true;
+                                i = 5;
+                            }
                         }
                     }
                 }
-                std::cout << equation << std::endl;
             }
         }
 
@@ -139,24 +145,102 @@ void appUpdate(sf::RenderWindow &window)
     }
     if (solveTime)
     {
-        if (solveEquation(equation))
-        {
-            std::cout << "Solution: " << equation << std::endl;
-        }
+        double solution = solveEquation(operators, numbers, "*/");
+        numbers.clear();
+        operators.clear();
+        std::cout << "Solution: " << solution << std::endl;
     }
+    solveTime = false;
 }
 
-
-bool solveEquation(std::string& equation)
+double solveEquation(std::vector<char> &ops, std::vector<double> &nums, const char* activeOp)
 {
-    std::unordered_map<unsigned short int, char> operatorIndices;
-    unsigned int opCount = 0;
-    //Parse the equation to find the indexes of the operators
-    for (int i = 0; i < equation.length(); i++)
+    std::vector<double>::iterator numsIter = nums.begin();
+    std::vector<char>::iterator opsIter = ops.begin();
+    const char* newActiveOp = "";
+    double solution = 0.0;
+
+    if (nums.size() == 1)
     {
-        if (equation[i] == '+' || equation[i] == '-' || equation[i] == '*' || equation[i] == '/')
-            operatorIndices.emplace(i, equation[i]);
+        return nums.at(0);
     }
-    
-    
+
+    //Perform one set of operations on the equation
+    if (ops.size() > 0)
+    {
+        if (activeOp == "*/")
+        {
+            for (unsigned int i = 0; i < ops.size(); i++)
+            {
+                if (ops.at(i) == '*')
+                {
+                    const double product = multNums((double)nums.at(i), (double)nums.at(i + 1));
+                    numsIter = nums.erase(numsIter, numsIter+2);
+                    nums.emplace(numsIter, product);
+                    ops.erase(opsIter, opsIter + 1);
+                    break;
+                }
+                if (ops.at(i) == '/')
+                {
+                    const double quotient = divNums((double)nums.at(i), (double)nums.at(i + 1));
+                    numsIter = nums.erase(numsIter, numsIter+2);
+                    nums.insert(numsIter, quotient);
+                    ops.erase(opsIter, opsIter + 1);
+                    break;
+                }
+                opsIter++;
+                numsIter++;
+            }
+            //Check for activeOps in the operations vector
+            for (unsigned int j = 0; j < ops.size(); j++)
+            {
+                if (ops.at(j) == '*' || ops.at(j) == '/')
+                {
+                    newActiveOp = activeOp;
+                    break;
+                }
+                else
+                    newActiveOp = "+-";
+            }
+        }
+        if (activeOp == "+-")
+        {
+            for (unsigned int i = 0; i < ops.size(); i++)
+            {
+                if (ops.at(i) == '+')
+                {
+                    const double sum = addNums((double)nums.at(i), (double)nums.at(i + 1));
+                    numsIter = nums.erase(numsIter, numsIter+2);
+                    nums.insert(numsIter, sum);
+                    ops.erase(opsIter, opsIter + 1);
+                    break;
+                }
+                if (ops.at(i) == '-')
+                {
+                    const double difference = subNums((double)nums.at(i), (double)nums.at(i + 1));
+                    numsIter = nums.erase(numsIter, numsIter+2);
+                    nums.insert(numsIter, difference);
+                    ops.erase(opsIter, opsIter + 1);
+                    break;
+                }
+                opsIter++;
+                numsIter++;
+            }
+            //Check for activeOps in the operations vector
+            for (unsigned int j = 0; j < ops.size(); j++)
+            {
+                if (ops.at(j) == '+' || ops.at(j) == '-')
+                    newActiveOp = activeOp;
+            }
+        }
+    }
+    if (nums.size() > 1)
+    {
+        solution = solveEquation(ops, nums, newActiveOp);
+    }
+    else
+    {
+        solution = nums.at(0);
+    }
+    return solution;
 }

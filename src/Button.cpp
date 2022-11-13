@@ -15,11 +15,13 @@ namespace GUI
 		m_text.setCharacterSize(m_rectBox.getLocalBounds().height / 2);
 		centerText();
 		m_text.setFillColor(sf::Color::Black);
+		m_isActive = false;
 	}
 
 	Button::Button(sf::Vector2f position, sf::Vector2f size, sf::String text) :
 		m_pos{ position },
-		m_size{ size }
+		m_size{ size },
+		m_isActive{false}
 	{
 		
 		m_rectBox = sf::RectangleShape(m_size);
@@ -96,7 +98,7 @@ namespace GUI
 			m_text.setPosition(sf::Vector2f(m_rectBox.getPosition().x - (buttonBoundingBox.width * 0.017) + (buttonBoundingBox.width / 2 - textBoundingBox.width / 2), m_rectBox.getPosition().y - (buttonBoundingBox.height * 0.14) + (buttonBoundingBox.height / 2 - textBoundingBox.height / 2)));
 	}
 
-	void Button::operator=(Button& button)
+	const void Button::operator=(Button& button)
 	{
 		m_pos = button.getPos();
 		m_size = button.getSize();

@@ -31,7 +31,7 @@ namespace GUI
 		void setFont(sf::Font newFont);
 		void setPosition(sf::Vector2f position);
 		void setSize(sf::Vector2f size);
-		void operator=(Button &button);
+		const void operator=(Button &button);
 		sf::Vector2f getPos();
 		sf::Vector2f getSize();
 		sf::String getTextString();
