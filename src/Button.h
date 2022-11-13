@@ -16,6 +16,7 @@ namespace GUI
 		sf::RectangleShape m_rectBox;
 		sf::Color m_outlineColor;
 		sf::Color m_fillColor;
+		bool m_isActive = false;
 	public:
 		Button(sf::Vector2f position, sf::Vector2f size, sf::String text);
 		Button();
@@ -23,8 +24,8 @@ namespace GUI
 		void draw(sf::RenderWindow& window);
 		void update(sf::RenderWindow &window);
 		bool contains(float x, float y);
-		void initNewButton(sf::Vector2f position, sf::Vector2f size, sf::Text text);//Initializes the new position and text for the =operator overload function
-		void setColor(sf::Color newColor, sf::Color outline);
+		void setBoxColor(sf::Color newColor, sf::Color outline);
+		void setMemberColor(sf::Color newColor, sf::Color outline);
 		void setText(sf::String newText, sf::Color textColor);
 		void setTextSize(unsigned int newSize);
 		void setFont(sf::Font newFont);
@@ -37,6 +38,7 @@ namespace GUI
 		sf::Text getText();
 		sf::Color getOutlineColor();
 		sf::Color getFillColor();
+		bool isActive();
 	private:
 		void centerText();
 	};

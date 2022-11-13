@@ -55,10 +55,17 @@ namespace GUI
 		m_rectBox.setSize(m_size);
 	}
 
-	void Button::setColor(sf::Color newColor, sf::Color outline)
+	void Button::setBoxColor(sf::Color newColor, sf::Color outline)
 	{
 		m_rectBox.setFillColor(newColor);
 		m_rectBox.setOutlineColor(outline);
+	}
+
+	void Button::setMemberColor(sf::Color newColor, sf::Color outline)
+	{
+		m_fillColor = newColor;
+		m_outlineColor = outline;
+		setBoxColor(m_fillColor, m_outlineColor);
 	}
 
 	void Button::setText(sf::String newText, sf::Color textColor)
@@ -97,24 +104,6 @@ namespace GUI
 		m_text = sf::Text(button.getTextString(), m_font);
 		m_outlineColor = button.getOutlineColor();
 		m_fillColor = button.getFillColor();
-		//initNewButton(m_pos, m_size, m_text);
-	}
-
-	void Button::initNewButton(sf::Vector2f position, sf::Vector2f size, sf::Text text)
-	{
-		m_rectBox = sf::RectangleShape(m_size);
-		m_rectBox.setPosition(m_pos);
-		m_rectBox.setFillColor(m_fillColor);
-		m_rectBox.setOutlineColor(m_outlineColor);
-		if (!m_font.loadFromFile("assets/fonts/ArialTh.ttf")) //Free-use font downloaded from dafont.com
-		{
-			std::cout << "Yeah that didn't work" << std::endl;
-		}
-		m_text.setOrigin(sf::Vector2f(0.f, 0.f));
-		m_text.setCharacterSize(m_rectBox.getLocalBounds().height / 2);
-		//Centering the text in the button
-		centerText();
-		m_text.setFillColor(sf::Color::Black);
 	}
 
 	sf::Color Button::getOutlineColor()
@@ -137,12 +126,19 @@ namespace GUI
 	{
 		if (contains(sf::Mouse::getPosition(window).x * 1.0f, sf::Mouse::getPosition(window).y * 1.0f))
 		{
-			setColor(sf::Color::Yellow, sf::Color::Black);
+			setBoxColor(sf::Color::Yellow, sf::Color::Black);
+			m_isActive = true;
 		}
 		else
 		{
-			setColor(sf::Color::White, sf::Color::Black);
+			setBoxColor(m_fillColor, m_outlineColor);
+			m_isActive = false;
 		}
+	}
+
+	bool Button::isActive()
+	{
+		return m_isActive;
 	}
 
 	bool Button::contains(float x, float y)
