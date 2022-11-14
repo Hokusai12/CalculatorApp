@@ -10,6 +10,9 @@ namespace GUI
 		if (!m_font.loadFromFile("assets/fonts/ArialTh.ttf"))
 			std::cout << "Yeah that didn't work";
 
+		m_rectBox.setOutlineColor(sf::Color::Black);
+		m_rectBox.setOutlineThickness(5.f);
+
 		m_text = sf::Text(sf::String(""), m_font);
 		m_text.setOrigin(sf::Vector2f(0.f, 0.f));
 		m_text.setCharacterSize(m_rectBox.getLocalBounds().height / 2);
@@ -38,8 +41,8 @@ namespace GUI
 		centerText();
 		m_outlineColor = sf::Color::Black;
 		m_fillColor = sf::Color::White;
-		m_rectBox.setOutlineColor(m_outlineColor);
-		m_rectBox.setOutlineThickness(2.f);
+		m_rectBox.setOutlineColor(sf::Color::Black);
+		m_rectBox.setOutlineThickness(5.f);
 		m_rectBox.setFillColor(m_fillColor);
 		m_text.setFillColor(sf::Color::Black);
 	}
@@ -93,9 +96,9 @@ namespace GUI
 
 		//Weird math because for whatever reason the text wouldn't naturally align to the center
 		if (textBoundingBox.width > buttonBoundingBox.width)
-			m_text.setPosition(sf::Vector2f(m_rectBox.getPosition().x - (buttonBoundingBox.width * 0.017), m_rectBox.getPosition().y - (buttonBoundingBox.height * 0.14) + (buttonBoundingBox.height / 2 - textBoundingBox.height / 2)));
+			m_text.setPosition(sf::Vector2f(m_rectBox.getPosition().x - (buttonBoundingBox.width * 0.05), m_rectBox.getPosition().y - (buttonBoundingBox.height * 0.14) + (buttonBoundingBox.height / 2 - textBoundingBox.height / 2)));
 		else
-			m_text.setPosition(sf::Vector2f(m_rectBox.getPosition().x - (buttonBoundingBox.width * 0.017) + (buttonBoundingBox.width / 2 - textBoundingBox.width / 2), m_rectBox.getPosition().y - (buttonBoundingBox.height * 0.14) + (buttonBoundingBox.height / 2 - textBoundingBox.height / 2)));
+			m_text.setPosition(sf::Vector2f(m_rectBox.getPosition().x - (buttonBoundingBox.width * 0.05) + (buttonBoundingBox.width / 2 - textBoundingBox.width / 2), m_rectBox.getPosition().y - (buttonBoundingBox.height * 0.14) + (buttonBoundingBox.height / 2 - textBoundingBox.height / 2)));
 	}
 
 	const void Button::operator=(Button& button)

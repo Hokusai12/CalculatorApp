@@ -2,7 +2,9 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include "Button.h"
+#include "TextArea.h"
 
 void appInit();
 void appDraw(sf::RenderWindow& window);
@@ -16,6 +18,8 @@ double divNums(double a, double b) { return a / b; }
 
 GUI::Button numButtons[10];
 GUI::Button opButtons[5];
+GUI::Button clrButton(sf::Vector2f(70.f, 465.f), sf::Vector2f(100.f, 100.f), "CLR");
+GUI::TextArea equationDisplay(sf::Vector2f(5.f, 10.f), sf::Vector2f(490.f, 105.f), "");
 
 bool solveTime = false;
 std::string number = "";
@@ -25,7 +29,9 @@ std::vector<double> numbers;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(640, 755), "Calculator");
+    sf::RenderWindow window(sf::VideoMode(500, 640), "Calculator");
+    sf::RectangleShape background(sf::Vector2f(500.f, 640.f));
+    background.setFillColor(sf::Color::Color(100, 100, 100));
 
     appInit();
 
@@ -45,6 +51,7 @@ int main()
                         if (numButtons[i].isActive())
                         {
                             number += numButtons[i].getTextString().toAnsiString();
+                            equationDisplay.concatText(numButtons[i].getTextString().toAnsiString());
                         }
                     }
                     for (int i = 0; i < 5; i++)
@@ -53,8 +60,7 @@ int main()
                         {
                             operators.emplace_back(opButtons[i].getTextString().toAnsiString()[0]);
                             numbers.emplace_back((double)atoi(number.c_str()));
-                            std::cout << "Numbers: " << *numbers.data() << std::endl;
-                            std::cout << "Operators: " << *operators.data() << std::endl;
+                            equationDisplay.concatText(opButtons[i].getTextString().toAnsiString()[0]);
                             number = "";
                             if (opButtons[i].getTextString().toAnsiString() == "=")
                             {
@@ -69,6 +75,7 @@ int main()
         }
 
         window.clear();
+        window.draw(background);
         appDraw(window);
         window.display(); 
         appUpdate(window);
@@ -79,23 +86,23 @@ int main()
 
 void appInit()
 {
-    opButtons[0].setPosition(sf::Vector2f(420.f, 210.f));
+    opButtons[0].setPosition(sf::Vector2f(385.f, 150.f));
     opButtons[0].setSize(sf::Vector2f(100.f, 100.f));
     opButtons[0].setText("/", sf::Color::Black);
     opButtons[0].setMemberColor(sf::Color::Color(180, 180, 180), sf::Color::Black);
-    opButtons[1].setPosition(sf::Vector2f(420.f, 315.f));
+    opButtons[1].setPosition(sf::Vector2f(385.f, 255.f));
     opButtons[1].setSize(sf::Vector2f(100.f, 100.f));
     opButtons[1].setText("*", sf::Color::Black);
     opButtons[1].setMemberColor(sf::Color::Color(180, 180, 180), sf::Color::Black);
-    opButtons[2].setPosition(sf::Vector2f(420.f, 420.f));
+    opButtons[2].setPosition(sf::Vector2f(385.f, 360.f));
     opButtons[2].setSize(sf::Vector2f(100.f, 100.f));
     opButtons[2].setText("-", sf::Color::Black);
     opButtons[2].setMemberColor(sf::Color::Color(180, 180, 180), sf::Color::Black);
-    opButtons[3].setPosition(sf::Vector2f(420.f, 525.f));
+    opButtons[3].setPosition(sf::Vector2f(385.f, 465.f));
     opButtons[3].setSize(sf::Vector2f(100.f, 100.f));
     opButtons[3].setText("+", sf::Color::Black);
     opButtons[3].setMemberColor(sf::Color::Color(180, 180, 180), sf::Color::Black);
-    opButtons[4].setPosition(sf::Vector2f(315.f, 525.f));
+    opButtons[4].setPosition(sf::Vector2f(280.f, 465.f));
     opButtons[4].setSize(sf::Vector2f(100.f, 100.f));
     opButtons[4].setText("=", sf::Color::Black);
     opButtons[4].setMemberColor(sf::Color::Color(180, 180, 180), sf::Color::Black);
@@ -106,13 +113,13 @@ void appInit()
         for (int j = 0; j < 3; j++)
         {
             std::string str = std::to_string(7 + j - (i * 3));
-            numButtons[j + (3 * i)].setPosition(sf::Vector2f((105.f * j) + 105.f, 210.f + (105.f * i)));
+            numButtons[j + (3 * i)].setPosition(sf::Vector2f((105.f * j) + 70.f, 150.f + (105.f * i)));
             numButtons[j + (3 * i)].setSize(sf::Vector2f(100.f, 100.f));
             numButtons[j + (3 * i)].setText(str, sf::Color::Black);
             numButtons[j + (3 * i)].setMemberColor(sf::Color::White, sf::Color::Black);
         }
     }
-    numButtons[9].setPosition(sf::Vector2f(210.f, 525.f));
+    numButtons[9].setPosition(sf::Vector2f(175.f, 465.f));
     numButtons[9].setSize(sf::Vector2f(100.f, 100.f));
     numButtons[9].setText("0", sf::Color::Black);
     numButtons[9].setMemberColor(sf::Color::White, sf::Color::Black);
@@ -128,6 +135,8 @@ void appDraw(sf::RenderWindow &window)
     {
         opButtons[i].draw(window);
     }
+    equationDisplay.draw(window);
+    clrButton.draw(window);
 }
 
 void appUpdate(sf::RenderWindow &window)
@@ -142,15 +151,23 @@ void appUpdate(sf::RenderWindow &window)
         {
             opButtons[i].update(window);
         }
+        clrButton.update(window);
     }
     if (solveTime)
     {
         double solution = solveEquation(operators, numbers, "*/");
+        if (solution - std::trunc(solution) > 0)
+        {
+            equationDisplay.setText(std::to_string(solution));
+        }
+        else
+        {
+            equationDisplay.setText(std::to_string((int)solution));
+        }
         numbers.clear();
         operators.clear();
-        std::cout << "Solution: " << solution << std::endl;
+        solveTime = false;
     }
-    solveTime = false;
 }
 
 double solveEquation(std::vector<char> &ops, std::vector<double> &nums, const char* activeOp)
