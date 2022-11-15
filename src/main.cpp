@@ -70,6 +70,12 @@ int main()
                             }
                         }
                     }
+                    if (clrButton.isActive())
+                    {
+                        equationDisplay.setText("");
+                        numbers.clear();
+                        operators.clear();
+                    }
                 }
             }
         }
