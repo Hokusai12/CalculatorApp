@@ -22,6 +22,7 @@ GUI::Button clrButton(sf::Vector2f(70.f, 465.f), sf::Vector2f(100.f, 100.f), "CL
 GUI::TextArea equationDisplay(sf::Vector2f(5.f, 10.f), sf::Vector2f(490.f, 105.f), "");
 
 bool solveTime = false;
+bool isSolved = false;
 std::string number = "";
 std::vector<char> operators;
 std::vector<double> numbers;
@@ -50,6 +51,11 @@ int main()
                     {
                         if (numButtons[i].isActive())
                         {
+                            if (isSolved)
+                            {
+                                equationDisplay.clearText();
+                                isSolved = false;
+                            }
                             number += numButtons[i].getTextString().toAnsiString();
                             equationDisplay.concatText(numButtons[i].getTextString().toAnsiString());
                         }
@@ -173,6 +179,7 @@ void appUpdate(sf::RenderWindow &window)
         numbers.clear();
         operators.clear();
         solveTime = false;
+        isSolved = true;
     }
 }
 
