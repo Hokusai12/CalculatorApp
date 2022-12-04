@@ -24,7 +24,7 @@ namespace GUI
 		void draw(sf::RenderWindow& window);
 		void update(sf::RenderWindow &window);
 		bool contains(float x, float y);
-		void setBoxColor(sf::Color newColor, sf::Color outline);
+		void setBoxColor(sf::Color newColor = sf::Color::White, sf::Color outline = sf::Color::Black);
 		void setText(sf::String newText, sf::Color textColor);
 		void setTextSize(unsigned int newSize);
 		void setFont(sf::Font newFont);

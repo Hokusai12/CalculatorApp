@@ -53,7 +53,7 @@ namespace GUI
 		m_rectBox.setSize(m_size);
 	}
 
-	void Button::setBoxColor(sf::Color newColor, sf::Color outline=sf::Color::Black)
+	void Button::setBoxColor(sf::Color newColor, sf::Color outline)
 	{
 		m_fillColor = newColor;
 		m_outlineColor = outline;

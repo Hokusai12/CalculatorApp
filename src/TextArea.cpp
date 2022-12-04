@@ -4,19 +4,23 @@
 namespace GUI
 {
 
-	TextArea::TextArea(sf::Vector2f position, sf::Vector2f size, sf::String text)
+	TextArea::TextArea()
+	{
+	}
+
+	TextArea::TextArea(sf::Vector2f position, sf::Vector2f size, sf::String text, sf::Font& font) :
+		m_pos {position},
+		m_size {size},
+		m_font {font}
 	{
 		m_textBox.setPosition(position);
 		m_textBox.setSize(size);
-		m_textBox.setFillColor(sf::Color::Color(180, 180, 180));
 		m_backgroundColor = sf::Color::White;
-		if (!m_font.loadFromFile("assets/fonts/ArialTh.ttf"))
-			std::cout << "Failed to load font" << std::endl;
-		m_text.setFont(m_font);
+		m_textBox.setFillColor(sf::Color::White);
+		m_text.setFont(font);
 		m_text.setString(text);
-		m_text.setOrigin(sf::Vector2f(0.f, 0.f));
-		m_text.setFillColor(sf::Color::Black);
 		m_textColor = sf::Color::Black;
+		m_text.setFillColor(sf::Color::Black);
 		m_text.setCharacterSize(m_textBox.getLocalBounds().height / 2);
 		alignText(Alignment::Center);
 	}
@@ -27,9 +31,29 @@ namespace GUI
 		window.draw(m_text);
 	}
 
+	void TextArea::operator=(const TextArea *display)
+	{
+		this->m_pos = display->m_pos;
+		this->m_size = display->m_size;
+		this->m_text = display->m_text;
+		this->m_font.loadFromFile("assets/fonts/ArialTh.ttf");
+		this->m_backgroundColor = display->m_backgroundColor;
+		this->m_outlineColor = display->m_outlineColor;
+		this->m_textBox = display->m_textBox;
+		//this->centerText();
+	}
+
 	void TextArea::clearText()
 	{
 		m_text.setString("");
+	}
+
+	void TextArea::setColor(sf::Color fillColor, sf::Color outlineColor)
+	{
+		m_backgroundColor = fillColor;
+		m_outlineColor = outlineColor;
+		m_textBox.setFillColor(fillColor);
+		m_textBox.setOutlineColor(outlineColor);
 	}
 
 	void TextArea::setText(sf::String newText)
