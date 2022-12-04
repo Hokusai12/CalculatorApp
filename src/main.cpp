@@ -1,14 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
+#include <iostream>
 #include "Button.h"
 #include "TextArea.h"
 
 void appInit();
 void appDraw(sf::RenderWindow& window);
-void appUpdate(sf::RenderWindow &window);
+void appUpdate(sf::RenderWindow& window);
 
-double solveEquation(std::vector<char>& ops, std::vector<double>& nums);
+bool checkEquation();
+double solveEquation(std::string &equation);
 double addNums(double a, double b) { return a + b; }
 double subNums(double a, double b) { return a - b; }
 double multNums(double a, double b) { return a * b; }
@@ -20,10 +22,6 @@ GUI::Button opButtons[10];
 GUI::Button clrButton;
 GUI::TextArea equationDisplay;
 
-bool solveTime = false;
-bool isSolved = false;
-std::vector<char> operators;
-std::vector<double> numbers;
 
 
 int main()
@@ -32,8 +30,6 @@ int main()
     std::string equation = "";
 
     sf::RenderWindow window(sf::VideoMode(425, 640), "Calculator");
-    sf::RectangleShape background(sf::Vector2f(500.f, 640.f));
-    background.setFillColor(sf::Color::Color(100, 100, 100));
 
     appInit();
 
@@ -53,7 +49,7 @@ int main()
     5.Solve the Equation
     6.Return solution to the TextArea Display
     7.Allow the user to continue working on the solution
-    
+
     */
     while (window.isOpen())
     {
@@ -72,25 +68,50 @@ int main()
                         if (numButtons[i].isActive())
                         {
                             equation += numButtons[i].getTextString().toAnsiString();
-                            equationDisplay.concatText(numButtons[i].getTextString().toAnsiString());
+                            equationDisplay.setText(equation);
                         }
                     }
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < 10; i++)
                     {
                         if (opButtons[i].isActive())
                         {
-                            numbers.emplace_back((double)atof(equation.c_str()));
-                            operators.emplace_back(opButtons[i].getTextString().toAnsiString()[0]);
-                            equationDisplay.concatText(opButtons[i].getTextString().toAnsiString()[0]);
-
-                            
-
-                            if (opButtons[i].getTextString().toAnsiString() == "=")
+                            //Check if the last character of the equation is an operator
+                            if ((equation[equation.size() - 1] == '*'
+                                || equation[equation.size() - 1] == '/'
+                                || equation[equation.size() - 1] == '-'
+                                || equation[equation.size() - 1] == '+'
+                                || equation[equation.size() - 1] == '^')
+                                && opButtons[i].getTextString().toAnsiString() != "(")
                             {
-                                operators.pop_back();
-                                solveTime = true;
-                                i = 5;
+                                equation[equation.size() - 1] = opButtons[i].getTextString().toAnsiString()[0];
                             }
+                            else if (opButtons[i].getTextString().toAnsiString() == "(" &&
+                                (equation[equation.size() - 1] != '*'
+                                    && equation[equation.size() - 1] != '/'
+                                    && equation[equation.size() - 1] != '-'
+                                    && equation[equation.size() - 1] != '+'
+                                    && equation[equation.size() - 1] != '^'))
+                            {
+                                equation += "*(";
+                            }
+                            else if (equation.substr(equation.size() - 2, 2) == "*(")
+                            {
+                                equation.erase(equation.size() - 2, 2);
+                                equation += opButtons[i].getTextString().toAnsiString();
+                            }
+                            else if (opButtons[i].getTextString().toAnsiString() == "=")
+                            {
+                                double solution = 0.0;
+                                if(checkEquation())
+                                    solution = solveEquation(equation);
+                                equationDisplay.setText(std::to_string(solution));
+                                break;
+                            }
+                            else
+                            {
+                                equation += opButtons[i].getTextString().toAnsiString();
+                            }
+                            equationDisplay.setText(equation);
                         }
                     }
                 }
@@ -98,7 +119,6 @@ int main()
         }
 
         window.clear();
-        window.draw(background);
         appDraw(window);
         window.display(); 
         appUpdate(window);
@@ -166,51 +186,19 @@ void appDraw(sf::RenderWindow &window)
 
 void appUpdate(sf::RenderWindow &window)
 {
-    if (!solveTime)
+    for (int i = 0; i < 10; i++)
     {
-        for (int i = 0; i < 10; i++)
-        {
-            numButtons[i].update(window);
-        }
-        for (int i = 0; i < 10; i++)
-        {
-            opButtons[i].update(window);
-        }
-        clrButton.update(window);
+        numButtons[i].update(window);
     }
-    else if (solveTime)
+    for (int i = 0; i < 10; i++)
     {
-        double solution = solveEquation(operators, numbers);
-        if (solution - std::trunc(solution) > 0)
-        {
-            equationDisplay.setText(std::to_string(solution));
-        }
-        else
-        {
-            equationDisplay.setText(std::to_string((int)solution));
-        }
-        operators.clear();
-        solveTime = false;
-        isSolved = true;
+        opButtons[i].update(window);
     }
+    clrButton.update(window);
 }
 
-template <typename T>
-bool vecContains(std::vector<T> vec, T element)
+double solveEquation(std::string &equation)
 {
-    for (int i = 0; i < vec.size(); i++)
-    {
-        if (vec.at(i) == element)
-            return true;
-    }
-    return false;
-}
-
-double solveEquation(std::vector<char>& ops, std::vector<double>& nums)
-{
-    std::vector<double>::iterator numsIter = nums.begin();
-    std::vector<char>::iterator opsIter = ops.begin();
-    const char* newActiveOp = "";
     double solution = 0.0;
 
     if (nums.size() == 1)
