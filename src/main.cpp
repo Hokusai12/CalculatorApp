@@ -72,7 +72,7 @@ int main()
                             //Check if the last character of the equation is an operator
                             if ((equation[equation.size() - 1] == '*'
                                 || equation[equation.size() - 1] == '/'
-                                || equation[equation.size() - 1] == '-'
+                                || equation[equation.size() - 1] == '~'
                                 || equation[equation.size() - 1] == '+'
                                 || equation[equation.size() - 1] == '^')
                                 && opButtons[i].getTextString().toAnsiString() != "(")
@@ -82,7 +82,7 @@ int main()
                             else if (opButtons[i].getTextString().toAnsiString() == "(" &&
                                 (equation[equation.size() - 1] != '*'
                                     && equation[equation.size() - 1] != '/'
-                                    && equation[equation.size() - 1] != '-'
+                                    && equation[equation.size() - 1] != '~'
                                     && equation[equation.size() - 1] != '+'
                                     && equation[equation.size() - 1] != '^'
                                     && equation[equation.size() - 1] != '(')
@@ -148,7 +148,7 @@ void appInit()
     opButtons[3] = new GUI::Button(sf::Vector2f(320.f, 220.f), sf::Vector2f(100.f, 100.f), "/", appFont);
     opButtons[4] = new GUI::Button(sf::Vector2f(320.f, 325.f), sf::Vector2f(100.f, 100.f), "*", appFont);
     opButtons[5] = new GUI::Button(sf::Vector2f(320.f, 430.f), sf::Vector2f(100.f, 100.f), "+", appFont);
-    opButtons[6] = new GUI::Button(sf::Vector2f(320.f, 535.f), sf::Vector2f(100.f, 100.f), "-", appFont);
+    opButtons[6] = new GUI::Button(sf::Vector2f(320.f, 535.f), sf::Vector2f(100.f, 100.f), "~", appFont);
     opButtons[8] = new GUI::Button(sf::Vector2f(215.f, 535.f), sf::Vector2f(100.f, 100.f), "=", appFont);
     opButtons[9] = new GUI::Button(sf::Vector2f(5.f, 535.f), sf::Vector2f(100.f, 100.f), ".", appFont);
     for (int i = 0; i < 10; i++)

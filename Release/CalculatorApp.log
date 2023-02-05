@@ -1,10 +1,8 @@
 ﻿  Calculator.cpp
-D:\Workspace\Programs\C++\CalculatorApp\CalculatorApp\src\Calculator.cpp(86,43): warning C4018: '<': signed/unsigned mismatch
-D:\Workspace\Programs\C++\CalculatorApp\CalculatorApp\src\Calculator.cpp(151,43): warning C4018: '<': signed/unsigned mismatch
-D:\Workspace\Programs\C++\CalculatorApp\CalculatorApp\src\Calculator.cpp(214,43): warning C4018: '<': signed/unsigned mismatch
+D:\Workspace\Programs\C++\CalculatorApp\CalculatorApp\src\Calculator.cpp(50,39): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  1 of 210 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+  1 of 212 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   CalculatorApp.vcxproj -> D:\Workspace\Programs\C++\CalculatorApp\Release\CalculatorApp.exe

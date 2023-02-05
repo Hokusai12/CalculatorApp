@@ -13,5 +13,7 @@ private:
 	static double multNums(double a, double b) { return a * b; }
 	static double divNums(double a, double b) { return a / b; }
 	static double toPower(double a, double b) { return std::pow(a, b); }
+
+	static std::string solveEquationForOperators(std::string equation, std::string ops);
 };
 
