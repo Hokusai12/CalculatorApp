@@ -1,20 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <string>
-#include <vector>
+#include <cmath>
 #include <iostream>
-#include "Button.h"
-#include "TextArea.h"
+#include "gui/Button.h"
+#include "gui/TextArea.h"
+#include "Calculator.h"
 
 void appInit();
 void appDraw(sf::RenderWindow& window);
 void appUpdate(sf::RenderWindow& window);
 
-bool checkEquation();
-double solveEquation(std::string &equation);
-double addNums(double a, double b) { return a + b; }
-double subNums(double a, double b) { return a - b; }
-double multNums(double a, double b) { return a * b; }
-double divNums(double a, double b) { return a / b; }
 
 sf::Font appFont;
 GUI::Button numButtons[10];
@@ -68,7 +63,6 @@ int main()
                         if (numButtons[i].isActive())
                         {
                             equation += numButtons[i].getTextString().toAnsiString();
-                            equationDisplay.setText(equation);
                         }
                     }
                     for (int i = 0; i < 10; i++)
@@ -90,38 +84,50 @@ int main()
                                     && equation[equation.size() - 1] != '/'
                                     && equation[equation.size() - 1] != '-'
                                     && equation[equation.size() - 1] != '+'
-                                    && equation[equation.size() - 1] != '^'))
+                                    && equation[equation.size() - 1] != '^'
+                                    && equation[equation.size() - 1] != '(')
+                                && equation.size() > 0)
                             {
                                 equation += "*(";
                             }
-                            else if (equation.substr(equation.size() - 2, 2) == "*(")
-                            {
-                                equation.erase(equation.size() - 2, 2);
-                                equation += opButtons[i].getTextString().toAnsiString();
-                            }
                             else if (opButtons[i].getTextString().toAnsiString() == "=")
                             {
-                                double solution = 0.0;
-                                if(checkEquation())
-                                    solution = solveEquation(equation);
-                                equationDisplay.setText(std::to_string(solution));
+                                if (Calculator::checkEquation(equation))
+                                    equation = Calculator::solveEquation(equation);
+                                equationDisplay.setText(equation);
+                                std::cout << "------------------------------------------------------" << std::endl;
                                 break;
                             }
                             else
                             {
+                                if (equation.size() > 2)
+                                {
+                                    if (equation.substr(equation.size() - 2, 2) == "*(")
+                                    {
+                                        equation.erase(equation.size() - 2, 2);
+                                        equation += opButtons[i].getTextString().toAnsiString();
+                                        break;
+                                    }
+                                }
                                 equation += opButtons[i].getTextString().toAnsiString();
                             }
-                            equationDisplay.setText(equation);
                         }
                     }
+                    equationDisplay.setText(equation);
+                }
+                if (clrButton.isActive())
+                {
+                    equation.clear();
+                    equationDisplay.clearText();
                 }
             }
         }
 
         window.clear();
         appDraw(window);
-        window.display(); 
+        window.display();
         appUpdate(window);
+
     }
 
     return 0;
@@ -197,95 +203,14 @@ void appUpdate(sf::RenderWindow &window)
     clrButton.update(window);
 }
 
-double solveEquation(std::string &equation)
+
+std::string reverseString(std::string str)
 {
-    double solution = 0.0;
-
-    if (nums.size() == 1)
+    std::string new_string = "";
+    for (int i = str.size() - 1; i >= 0; i--)
     {
-        return nums.at(0);
+        new_string += str.at(i);
     }
 
-    //Perform one set of operations on the equation
-    if (ops.size() > 0)
-    {
-        if (vecContains<char>(ops, '(') && vecContains<char>(ops, ')'))
-        {
-            std::vector<double> parNums;
-            std::vector<char> parOps;
-            for (unsigned int i = 0; i < ops.size(); i++)
-            {
-                if (ops.at(i) == '(')
-                {
-                    for (unsigned int j = 0; ops.at(j) == ')' || j < ops.size(); j++)
-                    {
-                        parOps.emplace_back(ops.at(j));
-                        parNums.emplace_back(nums.at(j));
-                    }
-                }
-            }
-        }
-        else if (vecContains<char>(ops, '^'))
-        {
-
-        }
-        else if (vecContains<char>(ops, '*') || vecContains<char>(ops, '/'))
-        {
-            for (unsigned int i = 0; i < ops.size(); i++)
-            {
-                if (ops.at(i) == '*')
-                {
-                    const double product = multNums((double)nums.at(i), (double)nums.at(i + 1));
-                    numsIter = nums.erase(numsIter, numsIter + 2);
-                    nums.emplace(numsIter, product);
-                    ops.erase(opsIter, opsIter + 1);
-                    break;
-                }
-                if (ops.at(i) == '/')
-                {
-                    const double quotient = divNums((double)nums.at(i), (double)nums.at(i + 1));
-                    numsIter = nums.erase(numsIter, numsIter + 2);
-                    nums.insert(numsIter, quotient);
-                    ops.erase(opsIter, opsIter + 1);
-                    break;
-                }
-                opsIter++;
-                numsIter++;
-            }
-        }
-        else if (vecContains<char>(ops, '+') || vecContains<char>(ops, '-'))
-        {
-            for (unsigned int i = 0; i < ops.size(); i++)
-            {
-                if (ops.at(i) == '+')
-                {
-                    const double sum = addNums((double)nums.at(i), (double)nums.at(i + 1));
-                    numsIter = nums.erase(numsIter, numsIter + 2);
-                    nums.insert(numsIter, sum);
-                    ops.erase(opsIter, opsIter + 1);
-                    break;
-                }
-                if (ops.at(i) == '-')
-                {
-                    const double difference = subNums((double)nums.at(i), (double)nums.at(i + 1));
-                    numsIter = nums.erase(numsIter, numsIter + 2);
-                    nums.insert(numsIter, difference);
-                    ops.erase(opsIter, opsIter + 1);
-                    break;
-                }
-                opsIter++;
-                numsIter++;
-            }
-        }
-    }
-    if (nums.size() > 1)
-    {
-        solution = solveEquation(ops, nums);
-    }
-    else
-    {
-        solution = nums.at(0);
-    }
-    return solution;
+    return new_string;
 }
-
